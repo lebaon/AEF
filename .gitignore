@@ -1,0 +1,52 @@
+# General
+Thumbs.db
+.DS_Store
+
+#Mercurial
+.hg/
+.hgignore
+
+# Visual Studio 
+*.aps
+*.bak
+*.cache
+*.ilk
+*.lib
+*.log
+*.ncb
+*.obj
+*.pch
+*.pdb
+*.sbr
+*.suo
+*.docstates
+*.tlb
+*.tlh
+*.user
+*.vspscc
+*.xap
+*.xbap
+*_i.c
+*_p.c
+[Bb]in/
+ClientBin/
+[Dd]ebug*/
+[Oo]bj/
+[Rr]elease*/
+[Tt]est[Rr]esult*
+
+# Azure
+ServiceDefinition.build.csdef
+_bin*/
+
+# CodeSmart
+*.csproj.vs10x
+
+# Silverlight
+[Gg]enerated_[Cc]ode/
+
+# ReSharper ignore files
+_ReSharper*/
+*[Rr]esharper*
+[Tt]est[Rr]esult*
+
