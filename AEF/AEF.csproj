@@ -45,10 +45,13 @@
     <Compile Include="ActorInstanceGenerator.cs" />
     <Compile Include="ActorRef.cs" />
     <Compile Include="ActorRefFactory.cs" />
+    <Compile Include="ActorCore.cs" />
     <Compile Include="ActorSystem.cs" />
     <Compile Include="Actors\DefaultActor.cs" />
     <Compile Include="AEFException.cs" />
     <Compile Include="Attributes\EqualAttribute.cs" />
+    <Compile Include="ExceptionDecision.cs" />
+    <Compile Include="Helpers\IFluent.cs" />
     <Compile Include="Helpers\MethodFinder.cs" />
     <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Helpers\TaskHelper.cs" />

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AEF;
 
-namespace Tests.Actors
+namespace AEF.Tests.Actors
 {
     class crerateactormsg { }
     class senderdetectmsginto
@@ -31,10 +31,10 @@ namespace Tests.Actors
             base.PredStart();
             state = 10;
         }
-        public override void PostRestart(object cause)
+        public override void PostRestart()
         {
-            base.PostRestart(cause);
-            if (cause is testmsg) state = 15;
+            base.PostRestart();
+             state = 15;
             
         }
 

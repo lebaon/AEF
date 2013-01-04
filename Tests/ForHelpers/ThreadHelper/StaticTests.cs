@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using AEF.Helpers;
 
-namespace Tests.ForHelpers.ThreadHelper.StaticTests
+namespace AEF.Tests.ForHelpers.ThreadHelper.StaticTests
 {
     class Message
     {

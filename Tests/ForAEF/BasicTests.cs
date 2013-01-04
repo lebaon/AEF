@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using AEF;
-using Tests.Actors;
+using AEF.Tests.Actors;
 using System.Threading;
 using System.Threading.Tasks;
 
 
-namespace Tests
+namespace AEF.Tests.ForAEF
 {
 
-    public class AEFBasicTests
+    public class BasicTests
     {
         [Test]
         public void SimpleTestTell()
@@ -320,7 +320,7 @@ namespace Tests
 
             Assert.AreEqual(10, tsk.Result);
 
-            acts.RestartActor(act,null);
+            acts.RestartActor(act);
 
             m = new statemsg() { newstate = 10 };
 

@@ -8,5 +8,10 @@ namespace AEF.Actors
 {
     class DefaultActor:Actor
     {
+        public override ExceptionDecision ChildException(Exception e)
+        {
+            return ExceptionDecision.Stop;
+        }
+
     }
 }

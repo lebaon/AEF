@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AEF
 {
-    public class ActorContext:ActorRefFactory
+    public class ActorContext:ActorRefFactory,AEF.Helpers.IFluent
     {
         private ActorRef Self_;
         
@@ -15,38 +15,47 @@ namespace AEF
             internal set { Self_ = value; }
         }
 
-        internal ActorSystem System { get; set; }
+        internal ActorCore System { get; set; }
         internal Message Msg { get; set; }
 
         public ActorRef Sender { get { return Msg.Sender; } }
         public bool SenderAsked { get { return Msg is AskMessage; } }
 
-        public void Stop()
+        public ActorRef Parent { get { return Self_.parent; } }
+        public ActorRef[] Childs { get { return Self_.childs.Keys.ToArray(); } }
+
+        public void StopActor(ActorRef actor)
         {
-            System.ContextStopActor(Self_);
+            if (actor == Self) throw new AEFActorStopException();
+            System.StopActor(actor,Self);
+
         }
+        public void RestartActor(ActorRef actor)
+        {
+            if (actor == Self) throw new AEFActorRestartException();
+            Exception e= System.RestartActor(actor,Self);
+            if (e != null) throw e;
+        }
+        
 
         public override ActorRef CreateActor<T>() 
         {
-            return System.CreateActor<T>();
+             return CreateActor(new ActorInstanceGenerator(typeof(T)));
         }
-
         public override ActorRef CreateActor<T>(params object[] args) 
         {
-            return System.CreateActor<T>(args);
+            return CreateActor(new ActorInstanceGenerator(typeof(T), args));
         }
-
-
-
         internal override ActorRef CreateActor(ActorInstanceGenerator Gener)
         {
-            return System.CreateActor(Gener);
+            var Result = System.CreateActor(Gener, Self_);
+           
+            
+            return Result;
         }
-
-
         public override ActorRef CreateActor(Func<Actor> Gener)
         {
-            return System.CreateActor(Gener);
+            return CreateActor(new ActorInstanceGenerator(Gener));
         }
     }
 }

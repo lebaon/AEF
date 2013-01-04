@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Tests;
+using AEF.Tests.ForAEF;
 using System.Reflection;
 
 
@@ -12,7 +12,7 @@ namespace TestRunner
     {
         static void Main(string[] args)
         {
-            var t = new AEFBasicTests();
+            var t = new BasicTests();
             
             Console.ReadLine();
         }

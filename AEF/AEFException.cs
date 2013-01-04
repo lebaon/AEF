@@ -5,8 +5,11 @@ using System.Text;
 
 namespace AEF
 {
-    class AEFException:Exception
+    class AEFException : Exception
     {
         public AEFException(string Message) : base(Message) { }
+        public AEFException() : base() { }
     }
+    class AEFActorStopException : AEFException { }
+    class AEFActorRestartException : AEFException { }
 }

@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using AEF;
-using Tests.Actors;
+using AEF.Tests.Actors;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Tests
+namespace AEF.Tests.ForAEF
 {
-    public class AEFinActorTests
+    public class InActorTests
     {
         [Test]
-        public void StopActorTest()
+        public void SelfStopActorTest()
         {
             bool f = false;
 
@@ -22,7 +22,11 @@ namespace Tests
             var act = acts.CreateActor<SimpleTestActor>();
             var sm = new stopmsg();
             var tsk = act.Ask<int>(sm);
-            tsk.Wait();
+            try
+            {
+                tsk.Wait();
+            }
+            catch { }
             var m = new acttestmsg()
             {
                 act = () =>
@@ -96,12 +100,12 @@ namespace Tests
 
             Assert.AreEqual(10, tsk.Result);
 
-            acts.RestartActor(act, null);
+            acts.RestartActor(act);
 
             tsk = act.Ask<int>(new statemsg());
             tsk.Wait();
 
-            Assert.AreEqual(0, tsk.Result);
+            Assert.AreEqual(15, tsk.Result);
 
 
         }
@@ -118,14 +122,9 @@ namespace Tests
 
             Assert.AreEqual(10, tsk.Result);
 
-            acts.RestartActor(act, null);
+            
 
-            tsk = act.Ask<int>(new statemsg());
-            tsk.Wait();
-
-            Assert.AreEqual(0, tsk.Result);
-
-            acts.RestartActor(act, new testmsg());
+            acts.RestartActor(act);
 
             tsk = act.Ask<int>(new statemsg());
             tsk.Wait();
@@ -178,10 +177,11 @@ namespace Tests
         {
             Exception e = null;
             var acts = new ActorSystem();
+            
             var act = acts.CreateActor<RestartFaultActor>();
             try
             {
-                acts.RestartActor(act,null);
+                acts.RestartActor(act);
             }
             catch (Exception ex) { e = ex; }
 

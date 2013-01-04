@@ -11,6 +11,10 @@ namespace AEF
         public ActorRef Sender { get; set; }
 
     }
+    class ExceptionMessage : Message
+    {
+        public Exception e { get; set; }
+    }
     class NOPMessage : Message { }
     class TellMessage : Message
     {

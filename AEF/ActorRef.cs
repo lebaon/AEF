@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -10,19 +11,97 @@ using System.Reflection;
 
 namespace AEF
 {
-    public class ActorRef
+    public class ActorRef : AEF.Helpers.IFluent
     {
         internal ActorInstanceGenerator Gen { get; set; }
         private Arbitr<Message, NOPMessage> Arbitr;
         private MethodFinder MethodFinder;
-        internal Actor actor;
-        private ActorSystem system;
+        private Actor actor;
+        private ActorCore system;
         private bool Stopped = false;
         private bool ProcRunning = false;
+        internal ActorRef parent = null;
+
+        internal ConcurrentDictionary<ActorRef, ActorRef> childs = new ConcurrentDictionary<ActorRef, ActorRef>();
+        internal bool Suspended { get { return Arbitr.Suspended; } }
+
+
+        internal void RunPostStop(ActorRef initiator)
+        {
+            try
+            {
+                actor.Context = new ActorContext() { Msg = new Message() { Sender = initiator },
+                    System = system, Self = this };
+                actor.PostStop();
+            }
+            catch (Exception e)
+            {
+                ProcPostStopException(e);
+            }
+        }
+        internal bool RunPredRestart(ActorRef initiator,ref Exception e)
+        {
+            bool res = true;
+            try
+            {
+                actor.Context = new ActorContext()
+                {
+                    Msg = new Message() { Sender = initiator },
+                    System = system,
+                    Self = this
+                };
+                actor.PredRestart();
+            }
+            catch(Exception ex)
+            {
+                res = false;
+                e = ex;
+            }
+
+            return res;
+        }
+        internal bool RunPostRestart(ActorRef initiator, ref Exception e)
+        {
+            bool res = true;
+            try
+            {
+                actor.Context = new ActorContext()
+                {
+                    Msg = new Message() { Sender = initiator },
+                    System = system,
+                    Self = this
+                };
+                actor.PostRestart();
+            }
+            catch (Exception ex)
+            {
+                res = false;
+                e = ex;
+            }
+
+            return res;
+
+        }
+        internal void RunPredStart(ActorRef initiator)
+        {
+            actor.Context = new ActorContext()
+            {
+                Msg = new Message() { Sender = initiator },
+                System = system,
+                Self = this
+            };
+            actor.PredStart();
+        }
 
         private void ProcMsgInStoppedActor(Message msg) { }
         private void ProcNotHandledMsg(Message msg) { }
-        private void ProcActorException(Exception e) { }
+        private void ProcActorException(Exception e) {
+            EndProcRunning();
+            if (e is AEFActorStopException) { system.StopActor(this, this); return; }
+            if (e is AEFActorRestartException) { system.RestartActor(this, this); return; }
+            system.SuspendActor(this);
+            parent.Send(new ExceptionMessage() { e = e, Sender = this });
+        }
         internal void ProcPostStopException(Exception e) { }
 
         private void ProcAnswerMessage(AnswerMessage msg) {
@@ -33,9 +112,9 @@ namespace AEF
 
                 
             }
-            catch (Exception e)
+            catch (TargetInvocationException e)
             {
-                ProcActorException(e);
+                ProcActorException(e.InnerException);
             }
 
         
@@ -52,9 +131,9 @@ namespace AEF
                 object ret = m.Invoke(actor, msg.args);
                 
             }
-            catch (Exception e)
+            catch (TargetInvocationException e)
             {
-                ProcActorException(e);
+                ProcActorException(e.InnerException);
             }
 
         }
@@ -90,13 +169,33 @@ namespace AEF
                     ReturnCode = msg.ReturnCode,
                     Sender = this
                 });
-                ProcActorException(e);
+                ProcActorException(e.InnerException);
             }
         
         
         
         
         }
+        private void ProcExceptionMessage(ExceptionMessage msg)
+        {
+            try
+            {
+                var doing = actor.ChildException(msg.e);
+                if (doing == ExceptionDecision.Stop) system.StopActor(msg.Sender,this);
+                if (doing == ExceptionDecision.Resume) system.ResumeActor(msg.Sender);
+                if (doing == ExceptionDecision.Restart)
+                {
+                    Exception e=system.RestartActor(msg.Sender, this);
+                    if (e != null) throw e;
+                }
+                if (doing == ExceptionDecision.Excalation) throw msg.e;
+            }
+            catch (Exception e)
+            {
+                ProcActorException(e);
+            }
+        }
+
 
         private void ProcMessage(Message msg)
         {
@@ -112,56 +211,91 @@ namespace AEF
                 return;
             }
             ProcRunning = true;
-            
+
+            object SavedTSV = ThreadStaticStorage.Value<object>();
             ThreadStaticStorage.SetValue(this);
             actor.Context = new ActorContext() { Msg = msg, System = system, Self = this };
             if (msg is AnswerMessage) ProcAnswerMessage((AnswerMessage)msg);
-            else
-                if (msg is AskMessage) ProcAskMessage((AskMessage)msg);
-                else
-                    if (msg is TellMessage) ProcTellMessage((TellMessage)msg);
-            ThreadStaticStorage.SetValue(null);
-            
+            else if (msg is AskMessage) ProcAskMessage((AskMessage)msg);
+            else if (msg is TellMessage) ProcTellMessage((TellMessage)msg);
+            else if (msg is ExceptionMessage) ProcExceptionMessage((ExceptionMessage)msg);
+            ThreadStaticStorage.SetValue(SavedTSV);
+
 
             ProcRunning = false;
         }
         private void ExceptionArbitrHandler(Exception e) { }
+        private void EndProcRunning()
+        {
+            ProcRunning = false;
+        }
 
-        public ActorRef(ActorSystem system)
+        
+        internal ActorRef(ActorCore system, ActorRef parent)
         {
             
             this.system = system;
+            this.parent = parent;
             Arbitr = new Arbitr<Message, NOPMessage>(ProcMessage, ExceptionArbitrHandler);
         }
-
-        internal void RunActor(Actor act)
+        internal void SetActor(Actor act)
         {
             actor = act;
             MethodFinder = new MethodFinder(act.GetType());
+        }
+        internal void RunActor()
+        {
+            
             if (Arbitr.Suspended) Arbitr.Resume();
         }
-
         internal void Stop()
         {
             Stopped = true;
+            
+            
             while (ProcRunning) { Thread.SpinWait(0); }
-        }
-
-        internal void ContextStop()
-        {
-            Stopped = true;
-        }
-
+            foreach (var i in childs.Keys)
+            {
+                system.StopActor(i, this);
+            }
+            system.RemoveChild(parent, this);
+            
+            if (Arbitr.Suspended) Arbitr.Resume();
+        }       
         internal void Suspend()
         {
             Arbitr.Suspend();
-            while (ProcRunning) { Thread.SpinWait(0); }
-        }
 
+            while (ProcRunning) { Thread.SpinWait(0); }
+
+            foreach (var i in childs.Keys)
+            {
+                system.SuspendActor(i);
+            }
+        }
+        internal void Resume()
+        {
+            foreach (var i in childs.Keys)
+            {
+                system.ResumeActor(i);
+            }
+            Arbitr.Resume();
+        }
         internal void Send(Message msg)
         {
             Arbitr.Send(msg);
         }
+        internal void AddChild(ActorRef child)
+        {
+            childs[child] = child;
+        }
+        internal void RemoveChild(ActorRef child)
+        {
+            ActorRef delchild;
+            childs.TryRemove(child,out delchild);
+        }
+
+
 
         public void Tell(params object[] args)
         {
@@ -173,9 +307,6 @@ namespace AEF
                 system.DefaultActor
             });
         }
-        
-        
-
         public Task<T> Ask<T>(params object[] args)
         {
             TaskHelper<T> th = new TaskHelper<T>();
@@ -190,7 +321,6 @@ namespace AEF
             });
             return th.Task;
         }
-
         public Task<T> Ask<T>(Action<T> Continuation, params object[] args)
         {
             TaskHelper<T> th = new TaskHelper<T>();
@@ -209,7 +339,6 @@ namespace AEF
             });
             return th.Task;
         }
-
         public Task<T> Ask<T>(Action<T, Exception> Continuation, params object[] args)
         {
             TaskHelper<T> th = new TaskHelper<T>();

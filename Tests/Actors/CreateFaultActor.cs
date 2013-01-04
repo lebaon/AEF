@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using AEF;
 
-namespace Tests.Actors
+namespace AEF.Tests.Actors
 {
     class CreateFaultActor:Actor
     {

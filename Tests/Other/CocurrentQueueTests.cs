@@ -6,7 +6,7 @@ using AEF.Helpers;
 using System.Diagnostics;
 using System.Collections.Concurrent;
 
-namespace Tests
+namespace AEF.Tests.Other
 {
     public class CocurrentQueueTests
     {

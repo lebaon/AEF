@@ -5,7 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using AEF.Helpers;
 
-namespace Tests.ForHelpers
+namespace AEF.Tests.ForHelpers
 {
     
     public class ReflectionHelperTests

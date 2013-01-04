@@ -8,7 +8,7 @@
     <ProjectGuid>{F5C6FA94-4A71-420B-8CF3-2A8785A36F71}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests</RootNamespace>
+    <RootNamespace>AEF.Tests</RootNamespace>
     <AssemblyName>Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -42,18 +42,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\CreateFaultActor.cs" />
+    <Compile Include="Actors\IerarhyTestActor.cs" />
     <Compile Include="Actors\IntoTestActor.cs" />
+    <Compile Include="Actors\PredRestartTestActor.cs" />
     <Compile Include="Actors\RestartFaultActor.cs" />
     <Compile Include="Actors\SimpleTestActor.cs" />
-    <Compile Include="AEFBasicTests.cs" />
-    <Compile Include="AEFinActorTests.cs" />
-    <Compile Include="CocurrentQueueTests.cs" />
+    <Compile Include="ForAEF\ActorIerarhyTests.cs" />
+    <Compile Include="ForAEF\BasicTests.cs" />
+    <Compile Include="ForAEF\ExceptionProcTests.cs" />
+    <Compile Include="ForAEF\InActorTests.cs" />
+    <Compile Include="Other\CocurrentQueueTests.cs" />
     <Compile Include="ForHelpers\MethodFinderTests.cs" />
     <Compile Include="ForHelpers\ReflectionHelperTests.cs" />
     <Compile Include="ForHelpers\TaskHelperTests.cs" />
     <Compile Include="ForHelpers\ThreadHelper\DinamicTests.cs" />
     <Compile Include="ForHelpers\ThreadHelper\StaticTests.cs" />
-    <Compile Include="Bags.cs" />
+    <Compile Include="Other\Bags.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

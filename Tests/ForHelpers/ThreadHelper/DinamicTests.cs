@@ -6,7 +6,7 @@ using AEF.Helpers;
 using System.Diagnostics;
 using System.Collections.Concurrent;
 
-namespace Tests.ForHelpers.ThreadHelper.DinamicTests
+namespace AEF.Tests.ForHelpers.ThreadHelper.DinamicTests
 {
     class Message { }
     class TaskMessage : Message { }

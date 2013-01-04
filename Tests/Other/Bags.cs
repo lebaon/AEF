@@ -6,7 +6,7 @@ using NUnit.Framework;
 using System.Threading;
 using System.Diagnostics;
 
-namespace Tests
+namespace AEF.Tests.Other
 {
     class intoNunitBags
     {

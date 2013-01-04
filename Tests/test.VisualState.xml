@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <VisualState xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ShowCheckBoxes="true">
   <TopNode>[0-1000]Y:\AEF\Tests\test.nunit</TopNode>
-  <SelectedNode>[0-1009]Tests.AEFBasicTests.SimpleTestAsk4</SelectedNode>
+  <SelectedNode>[0-1000]Y:\AEF\Tests\test.nunit</SelectedNode>
   <ExcludeCategories>false</ExcludeCategories>
   <Nodes>
     <Node UniqueName="[0-1000]Y:\AEF\Tests\test.nunit" Expanded="true" />
-    <Node UniqueName="[0-1050]Y:\AEF\Tests\bin\Release\Tests.dll" Expanded="true" />
-    <Node UniqueName="[0-1051]Tests" Expanded="true" />
-    <Node UniqueName="[0-1004]Tests.AEFBasicTests" Expanded="true" Checked="true" />
-    <Node UniqueName="[0-1052]Tests.ForHelpers" Expanded="true" />
-    <Node UniqueName="[0-1001]Tests.ForHelpers.TaskHelperTests" Expanded="true" />
-    <Node UniqueName="[0-1053]Tests.ForHelpers.ThreadHelper" Expanded="true" />
-    <Node UniqueName="[0-1055]Tests.ForHelpers.ThreadHelper.DinamicTests" Expanded="true" />
-    <Node UniqueName="[0-1054]Tests.ForHelpers.ThreadHelper.StaticTests" Expanded="true" />
+    <Node UniqueName="[0-1086]Y:\AEF\Tests\bin\Release\Tests.dll" Expanded="true" />
+    <Node UniqueName="[0-1087]AEF" Expanded="true" />
+    <Node UniqueName="[0-1088]AEF.Tests" Expanded="true" />
+    <Node UniqueName="[0-1094]AEF.Tests.ForAEF" Expanded="true" Checked="true" />
+    <Node UniqueName="[0-1089]AEF.Tests.ForHelpers" Expanded="true" />
+    <Node UniqueName="[0-1090]AEF.Tests.ForHelpers.ThreadHelper" Expanded="true" />
+    <Node UniqueName="[0-1092]AEF.Tests.ForHelpers.ThreadHelper.DinamicTests" Expanded="true" />
+    <Node UniqueName="[0-1091]AEF.Tests.ForHelpers.ThreadHelper.StaticTests" Expanded="true" />
+    <Node UniqueName="[0-1093]AEF.Tests.Other" Expanded="true" />
   </Nodes>
 </VisualState>

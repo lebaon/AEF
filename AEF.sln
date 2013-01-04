@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AEF", "AEF\AEF.csproj", "{DD6DBF6E-253B-4A72-8732-ACEB4FD51AFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{F5C6FA94-4A71-420B-8CF3-2A8785A36F71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AEF.Tests", "Tests\AEF.Tests.csproj", "{F5C6FA94-4A71-420B-8CF3-2A8785A36F71}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "TestRunner\TestRunner.csproj", "{E20592E3-60D3-4932-8FD2-ECE5678857BB}"
 EndProject

@@ -7,7 +7,7 @@ using AEF.Helpers;
 using AEF.Attributes;
 using System.Reflection;
 
-namespace Tests.ForHelpers
+namespace AEF.Tests.ForHelpers
 {
     class testclass1
     {

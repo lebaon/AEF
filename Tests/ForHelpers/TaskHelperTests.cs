@@ -6,7 +6,7 @@ using NUnit.Framework;
 using AEF.Helpers;
 using System.Threading.Tasks;
 
-namespace Tests.ForHelpers
+namespace AEF.Tests.ForHelpers
 {
     
     public class TaskHelperTests

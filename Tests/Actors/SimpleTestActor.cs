@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using AEF;
 
-namespace Tests.Actors
+namespace AEF.Tests.Actors
 {
     class testmsg {
         public string msg { get; set; }
@@ -43,7 +43,7 @@ namespace Tests.Actors
 
         public int handler4(stopmsg msg) {
 
-            Context.Stop();
+            Context.StopActor(Context.Self);
             return 10;
         }
     
