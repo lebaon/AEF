@@ -21,6 +21,13 @@ namespace AEF
         private bool Stopped = false;
         private bool ProcRunning = false;
         internal ActorRef parent = null;
+        private Guid ID = Guid.NewGuid();
+        private string Name_ = null;
+        internal ActorPath Path { get; private set; }
+
+
+        public string FullName { get { return Path.ToString(); } }
+        public string Name { get { return Name_; } }
 
         internal ConcurrentDictionary<ActorRef, ActorRef> childs = new ConcurrentDictionary<ActorRef, ActorRef>();
         internal bool Suspended { get { return Arbitr.Suspended; } }
@@ -98,7 +105,11 @@ namespace AEF
         private void ProcActorException(Exception e) {
             EndProcRunning();
             if (e is AEFActorStopException) { system.StopActor(this, this); return; }
-            if (e is AEFActorRestartException) { system.RestartActor(this, this); return; }
+            if (e is AEFActorRestartException)
+            {
+                Task.Factory.StartNew(() => { system.RestartActor(this, this); });
+                return;
+            }
             system.SuspendActor(this);
             parent.Send(new ExceptionMessage() { e = e, Sender = this });
         }
@@ -230,14 +241,24 @@ namespace AEF
             ProcRunning = false;
         }
 
-        
         internal ActorRef(ActorCore system, ActorRef parent)
         {
-            
+            Name_ = ID.ToString();
             this.system = system;
             this.parent = parent;
+            Path = new ActorPath(Name, parent.Path);
             Arbitr = new Arbitr<Message, NOPMessage>(ProcMessage, ExceptionArbitrHandler);
         }
+        internal ActorRef(ActorCore system, ActorRef parent,string name)
+        {
+            Name_ = name;
+            this.system = system;
+            this.parent = parent;
+            if (parent != null) Path = new ActorPath(Name, parent.Path);
+            else Path = new ActorPath(Name);
+            Arbitr = new Arbitr<Message, NOPMessage>(ProcMessage, ExceptionArbitrHandler);
+        }
+        
         internal void SetActor(Actor act)
         {
             actor = act;
@@ -294,7 +315,16 @@ namespace AEF
             ActorRef delchild;
             childs.TryRemove(child,out delchild);
         }
+        internal ActorRef FindActor(ActorPath fpath)
+        {
+            if (this.Path == fpath) return this;
 
+            string fchildname = this.Path.GetChildName(fpath);
+
+            var t = childs.Where((x) => { return x.Key.Name == fchildname; });
+            if (t.Count() == 0) return null;
+            return system.FindActorByPath(t.First().Key, fpath);
+        }
 
 
         public void Tell(params object[] args)
@@ -304,7 +334,7 @@ namespace AEF
                 args = args,
                 Sender = ThreadStaticStorage.Value<ActorRef>() != null ? 
                 ThreadStaticStorage.Value<ActorRef>() : 
-                system.DefaultActor
+                system.UserActor
             });
         }
         public Task<T> Ask<T>(params object[] args)
@@ -315,7 +345,7 @@ namespace AEF
                 args = args,
                 Sender = ThreadStaticStorage.Value<ActorRef>() != null ?
                 ThreadStaticStorage.Value<ActorRef>() :
-                system.DefaultActor,
+                system.UserActor,
                 ReturnType = typeof(T),
                 ReturnCode = th.RunTask
             });
@@ -329,7 +359,7 @@ namespace AEF
                 args = args,
                 Sender = ThreadStaticStorage.Value<ActorRef>() != null ?
                 ThreadStaticStorage.Value<ActorRef>() :
-                system.DefaultActor,
+                system.UserActor,
                 ReturnType = typeof(T),
                 ReturnCode = (x, e) =>
                 {
@@ -347,7 +377,7 @@ namespace AEF
                 args = args,
                 Sender = ThreadStaticStorage.Value<ActorRef>() != null ?
                 ThreadStaticStorage.Value<ActorRef>() :
-                system.DefaultActor,
+                system.UserActor,
                 ReturnType = typeof(T),
                 ReturnCode = (x, e) =>
                 {

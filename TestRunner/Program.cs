@@ -12,7 +12,9 @@ namespace TestRunner
     {
         static void Main(string[] args)
         {
-            var t = new BasicTests();
+            var t = new ActorIerarhyTests();
+
+            t.SelfRestartThrowException();
             
             Console.ReadLine();
         }

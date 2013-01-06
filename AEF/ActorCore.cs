@@ -8,19 +8,32 @@ namespace AEF
     internal class ActorCore
     {
 
-        private ActorRef DefaultActor_;
-        internal ActorRef DefaultActor { get { return DefaultActor_; } }
+        private ActorRef UserActor_;
+        internal ActorRef UserActor { get { return UserActor_; } }
+        private ActorRef RootActor;
+           
+
 
         public ActorCore()
         {
-            DefaultActor_ = CreateActor(new ActorInstanceGenerator(typeof(AEF.Actors.DefaultActor)), null);
+            RootActor = CreateActorEx(new ActorInstanceGenerator(typeof(Actors.RootActor)), null, "");
+            UserActor_ = CreateActor(new ActorInstanceGenerator(typeof(Actors.UserActor)), RootActor, "user");
         }
-
-
-        
-        internal  ActorRef CreateActor(ActorInstanceGenerator Gener,ActorRef parent)
+            
+        internal ActorRef CreateActor(ActorInstanceGenerator Gener, ActorRef parent, string Name)
         {
-            var res = new ActorRef(this,parent);
+            if (Name == "") Name = null;
+            if (Name != null)
+                if (Name.Contains('\\') | Name.Contains('/')) throw new ArgumentException();
+            return CreateActorEx(Gener, parent, Name);
+        }
+        
+        private ActorRef CreateActorEx(ActorInstanceGenerator Gener, ActorRef parent, string Name)
+        {
+            ActorRef res;
+            
+            if (Name != null) res = new ActorRef(this, parent, Name);
+            else res = new ActorRef(this, parent);
             res.Gen = Gener;
             Actor t = res.Gen.CreateActorInstance();
 
@@ -33,6 +46,17 @@ namespace AEF
             return res;
         }
 
+        public ActorRef FindActorByPath(string path)
+        {
+            var fpath = new Helpers.ActorPath(path);
+            return FindActorByPath(RootActor, fpath);
+        }
+
+        public ActorRef FindActorByPath(ActorRef actor, Helpers.ActorPath path)
+        {
+            return actor.FindActor(path);
+
+        }
 
         private void AddChild(ActorRef Parent, ActorRef Child)
         {

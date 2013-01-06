@@ -6,12 +6,11 @@ using AEF;
 
 namespace AEF.Actors
 {
-    class DefaultActor:Actor
+    class RootActor:Actor
     {
         public override ExceptionDecision ChildException(Exception e)
         {
-            return ExceptionDecision.Stop;
+            return ExceptionDecision.Resume;
         }
-
     }
 }

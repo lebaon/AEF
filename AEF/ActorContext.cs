@@ -48,7 +48,7 @@ namespace AEF
         }
         internal override ActorRef CreateActor(ActorInstanceGenerator Gener)
         {
-            var Result = System.CreateActor(Gener, Self_);
+            var Result = System.CreateActor(Gener, Self_,null);
            
             
             return Result;
@@ -57,5 +57,32 @@ namespace AEF
         {
             return CreateActor(new ActorInstanceGenerator(Gener));
         }
+
+        public override ActorRef CreateActor<T>(string Name)
+        {
+            return CreateActor(Name,new ActorInstanceGenerator(typeof(T)));
+        }
+        public override ActorRef CreateActor<T>(string Name,params object[] args)
+        {
+            return CreateActor(Name,new ActorInstanceGenerator(typeof(T), args));
+        }
+        internal override ActorRef CreateActor(string Name,ActorInstanceGenerator Gener)
+        {
+            var Result = System.CreateActor(Gener, Self_, Name);
+
+
+            return Result;
+        }
+        public override ActorRef CreateActor(string Name,Func<Actor> Gener)
+        {
+            return CreateActor(Name,new ActorInstanceGenerator(Gener));
+        }
+
+        public override ActorRef FindActorByPath(string Path)
+        {
+            return System.FindActorByPath(Path);
+        }
+    
+    
     }
 }

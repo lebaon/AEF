@@ -51,6 +51,8 @@
     <Compile Include="ForAEF\BasicTests.cs" />
     <Compile Include="ForAEF\ExceptionProcTests.cs" />
     <Compile Include="ForAEF\InActorTests.cs" />
+    <Compile Include="ForAEF\NameTests.cs" />
+    <Compile Include="ForHelpers\ActorPathTests.cs" />
     <Compile Include="Other\CocurrentQueueTests.cs" />
     <Compile Include="ForHelpers\MethodFinderTests.cs" />
     <Compile Include="ForHelpers\ReflectionHelperTests.cs" />

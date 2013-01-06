@@ -31,7 +31,7 @@ namespace AEF.Tests.Actors
         }
         public virtual ActorRef handler3(createchildactor msg)
         {
-            return Context.CreateActor<IerarhyTestActor>();
+            return Context.CreateActor<IerarhyTestActor>("child");
         }
         public int handler4(acttestmsg msg)
         {
