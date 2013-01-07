@@ -41,7 +41,7 @@ namespace AEF.Tests.ForAEF
 
             bool f = false;
 
-            var tsk = act.Ask<ActorRef>(new createchildactor());
+            var tsk = act.Ask<ActorRef>(new createchildactormsg());
             tsk.Wait();
 
             var act2 = tsk.Result;
@@ -65,7 +65,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<ExceptionActor>();
 
-            var tsk1 = act1.Ask<ActorRef>(new createchildactor());
+            var tsk1 = act1.Ask<ActorRef>(new createchildactormsg());
             tsk1.Wait();
             var act2 = tsk1.Result;
 
@@ -99,7 +99,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<ExceptionActor>();
 
-            var tsk1 = act1.Ask<ActorRef>(new createchildactor());
+            var tsk1 = act1.Ask<ActorRef>(new createchildactormsg());
             tsk1.Wait();
             var act2 = tsk1.Result;
 
@@ -135,7 +135,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<ExceptionActor>();
 
-            var tsk1 = act1.Ask<ActorRef>(new createchildactor());
+            var tsk1 = act1.Ask<ActorRef>(new createchildactormsg());
             tsk1.Wait();
             var act2 = tsk1.Result;
 
@@ -172,7 +172,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<ExceptionActor>();
 
-            var tsk1 = act1.Ask<ActorRef>(new createchildactor());
+            var tsk1 = act1.Ask<ActorRef>(new createchildactormsg());
             tsk1.Wait();
             var act2 = tsk1.Result;
 
@@ -207,11 +207,11 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<ExceptionActor>();
 
-            var tsk1 = act1.Ask<ActorRef>(new createchildactor());
+            var tsk1 = act1.Ask<ActorRef>(new createchildactormsg());
             tsk1.Wait();
             var act2 = tsk1.Result;
 
-            tsk1 = act2.Ask<ActorRef>(new createchildactor());
+            tsk1 = act2.Ask<ActorRef>(new createchildactormsg());
             tsk1.Wait();
             var act3 = tsk1.Result;
 

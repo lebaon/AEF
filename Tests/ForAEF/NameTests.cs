@@ -77,7 +77,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act = actf.CreateActor<IerarhyTestActor>("myactor");
 
-            var act2 = act.Ask<ActorRef>(new createchildactor()).Result;
+            var act2 = act.Ask<ActorRef>(new createchildactormsg()).Result;
 
             Assert.AreEqual("\\user\\myactor\\child", act2.FullName);
         }
@@ -89,7 +89,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act = actf.CreateActor<IerarhyTestActor>("myactor");
 
-            var act2 = act.Ask<ActorRef>(new createchildactor()).Result;
+            var act2 = act.Ask<ActorRef>(new createchildactormsg()).Result;
 
             var fact = actf.FindActorByPath("\\user\\myactor\\child");
 
@@ -103,7 +103,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act = actf.CreateActor<IerarhyTestActor>("myactor");
 
-            var act2 = act.Ask<ActorRef>(new createchildactor()).Result;
+            var act2 = act.Ask<ActorRef>(new createchildactormsg()).Result;
 
             var fact = actf.FindActorByPath("\\user\\myactor\\child3");
 

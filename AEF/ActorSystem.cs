@@ -64,6 +64,11 @@ namespace AEF
             core.StopActor(actor,core.UserActor);
         }
 
+        public void StopSystem()
+        {
+            core.StopSystem();
+        }
+
         public void RestartActor(ActorRef actor)
         {
             Exception e=core.RestartActor(actor, core.UserActor);

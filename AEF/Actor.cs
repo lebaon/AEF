@@ -9,6 +9,10 @@ namespace AEF
     {
         public ActorContext Context { get; set; }
 
+        public virtual void ChildStop() { }
+        public virtual void ChildRestart() { }
+
+
         public virtual ExceptionDecision ChildException(Exception e)
         {
             return ExceptionDecision.Excalation;

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace AEF
 {
@@ -24,17 +25,55 @@ namespace AEF
         public ActorRef Parent { get { return Self_.parent; } }
         public ActorRef[] Childs { get { return Self_.childs.Keys.ToArray(); } }
 
+        public PendingReturn PendingReturn()
+        {
+            if (!SenderAsked) throw new AEFException();
+            Self.PReturn.IsPending = true;
+            return Self.PReturn;
+        }
+
         public void StopActor(ActorRef actor)
         {
-            if (actor == Self) throw new AEFActorStopException();
-            System.StopActor(actor,Self);
 
+            StopActor(actor, () => { });
+
+        }
+
+        public void StopActor(ActorRef actor, Action Continuation)
+        {
+            if (actor == Self) throw new AEFActorStopException();
+            var tsk = Task.Factory.StartNew(() =>
+            {
+                System.StopActor(actor, Self);
+                Self.Send(new AnswerMessage()
+                {
+                    ReturnCode = (a, b) => { Continuation(); },
+                    ReturnValue = 0,
+                    Sender = Self
+
+                });
+            });
+
+        }
+        public void RestartActor(ActorRef actor, Action<Exception> Continuation)
+        {
+            if (actor == Self) throw new AEFActorRestartException();
+            var tsk = Task.Factory.StartNew(() =>
+            {
+                Exception e = System.RestartActor(actor, Self);
+                Self.Send(new AnswerMessage()
+                {
+                    ReturnCode = (a, b) => { Continuation(b); },
+                    ReturnValue = e,
+                    Sender = Self
+
+                });
+            });
         }
         public void RestartActor(ActorRef actor)
         {
-            if (actor == Self) throw new AEFActorRestartException();
-            Exception e= System.RestartActor(actor,Self);
-            if (e != null) throw e;
+
+            RestartActor(actor, (e) => { });
         }
         
 
@@ -83,6 +122,6 @@ namespace AEF
             return System.FindActorByPath(Path);
         }
     
-    
+   
     }
 }

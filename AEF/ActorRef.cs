@@ -24,7 +24,7 @@ namespace AEF
         private Guid ID = Guid.NewGuid();
         private string Name_ = null;
         internal ActorPath Path { get; private set; }
-
+        internal PendingReturn PReturn { get; set; }
 
         public string FullName { get { return Path.ToString(); } }
         public string Name { get { return Name_; } }
@@ -160,26 +160,25 @@ namespace AEF
                 });
                 return;
             }
+
+            PReturn = new PendingReturn()
+            {
+                Self = this,
+                ReturnType = msg.ReturnType,
+                Asker = msg.Sender,
+                IsPending = false,
+                ReturnCode = msg.ReturnCode
+            };
             try
             {
                 object ret = m.Invoke(actor, msg.args);
 
 
-                msg.Sender.Send(new AnswerMessage()
-                {
-                    ReturnValue = ret,
-                    ReturnCode = msg.ReturnCode,
-                    Sender = this
-                });
+                if(!PReturn.IsPending) PReturn.Return(ret);
             }
             catch (TargetInvocationException e)
             {
-                msg.Sender.Send(new AnswerMessage()
-                {
-                    ReturnValue = e.InnerException,
-                    ReturnCode = msg.ReturnCode,
-                    Sender = this
-                });
+                PReturn.ReturnException(e.InnerException);
                 ProcActorException(e.InnerException);
             }
         
@@ -200,6 +199,28 @@ namespace AEF
                     if (e != null) throw e;
                 }
                 if (doing == ExceptionDecision.Excalation) throw msg.e;
+            }
+            catch (Exception e)
+            {
+                ProcActorException(e);
+            }
+        }
+        private void ProcChildStopMessage(ChildStopMessage msg) {
+
+            try
+            {
+                actor.ChildStop();
+            }
+            catch (Exception e)
+            {
+                ProcActorException(e);
+            }
+        }
+        private void ProcChildRestartMessage(ChildRestartMessage msg) {
+
+            try
+            {
+                actor.ChildRestart();
             }
             catch (Exception e)
             {
@@ -230,6 +251,8 @@ namespace AEF
             else if (msg is AskMessage) ProcAskMessage((AskMessage)msg);
             else if (msg is TellMessage) ProcTellMessage((TellMessage)msg);
             else if (msg is ExceptionMessage) ProcExceptionMessage((ExceptionMessage)msg);
+            else if (msg is ChildRestartMessage) ProcChildRestartMessage((ChildRestartMessage)msg);
+            else if (msg is ChildStopMessage) ProcChildStopMessage((ChildStopMessage)msg);
             ThreadStaticStorage.SetValue(SavedTSV);
 
 

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\AsyncTestActor.cs" />
     <Compile Include="Actors\CreateFaultActor.cs" />
     <Compile Include="Actors\IerarhyTestActor.cs" />
     <Compile Include="Actors\IntoTestActor.cs" />
@@ -48,6 +49,7 @@
     <Compile Include="Actors\RestartFaultActor.cs" />
     <Compile Include="Actors\SimpleTestActor.cs" />
     <Compile Include="ForAEF\ActorIerarhyTests.cs" />
+    <Compile Include="ForAEF\AsyncTests.cs" />
     <Compile Include="ForAEF\BasicTests.cs" />
     <Compile Include="ForAEF\ExceptionProcTests.cs" />
     <Compile Include="ForAEF\InActorTests.cs" />

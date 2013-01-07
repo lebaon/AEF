@@ -30,4 +30,7 @@ namespace AEF
         public object ReturnValue { get; set; }
         public Action<object,Exception> ReturnCode { get; set; }
     }
+
+    class ChildStopMessage : Message { }
+    class ChildRestartMessage : Message { }
 }

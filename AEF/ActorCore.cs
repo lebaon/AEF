@@ -71,6 +71,7 @@ namespace AEF
             {
                 actor.Stop();
                 actor.RunPostStop(initiator);
+                 initiator.Send(new ChildStopMessage() { Sender = actor });
             }
             else
             {
@@ -82,6 +83,11 @@ namespace AEF
         {
             actor.Suspend();
 
+        }
+
+        public void StopSystem()
+        {
+            StopActor(RootActor, RootActor);
         }
 
         public void ResumeActor(ActorRef actor)
@@ -109,6 +115,8 @@ namespace AEF
                 }
                 
                 actor.RunActor();
+                initiator.Send(new ChildRestartMessage() { Sender = actor });
+
                 return e;
             }
             else

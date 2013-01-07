@@ -30,7 +30,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act = actf.CreateActor<IerarhyTestActor>();
 
-            var tsk = act.Ask<ActorRef>(new createchildactor());
+            var tsk = act.Ask<ActorRef>(new createchildactormsg());
             tsk.Wait();
 
             var act2 = tsk.Result;
@@ -53,7 +53,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<IerarhyTestActor>();
 
-            var tsk = act1.Ask<ActorRef>(new createchildactor());
+            var tsk = act1.Ask<ActorRef>(new createchildactormsg());
             tsk.Wait();
 
             var act2 = tsk.Result;
@@ -102,7 +102,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<IerarhyTestActor>();
             
-            var tsk = act1.Ask<ActorRef>(new createchildactor());
+            var tsk = act1.Ask<ActorRef>(new createchildactormsg());
             tsk.Wait();
 
             var act2 = tsk.Result;
@@ -148,7 +148,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<IerarhyTestActorOvveride>();
 
-            var tsk = act1.Ask<ActorRef>(new createchildactor());
+            var tsk = act1.Ask<ActorRef>(new createchildactormsg());
             tsk.Wait();
 
             var act2 = tsk.Result;
@@ -195,7 +195,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<IerarhyTestActorOvveride>();
 
-            var tsk = act1.Ask<ActorRef>(new createchildactor());
+            var tsk = act1.Ask<ActorRef>(new createchildactormsg());
             tsk.Wait();
 
             var act2 = tsk.Result;
@@ -216,7 +216,7 @@ namespace AEF.Tests.ForAEF
             var actf = new ActorSystem();
             var act1 = actf.CreateActor<IerarhyTestActorOvveride>();
 
-            var tsk = act1.Ask<ActorRef>(new createchildactor());
+            var tsk = act1.Ask<ActorRef>(new createchildactormsg());
             tsk.Wait();
 
             var act2 = tsk.Result;
@@ -353,6 +353,66 @@ namespace AEF.Tests.ForAEF
             catch { f = true; }
 
             Assert.IsTrue(f);
+
+        }
+
+        [Test]
+        public void ChildStopTest()
+        {
+            bool f = false;
+            
+            var actf = new ActorSystem();
+            var act1 = actf.CreateActor<ChildStopRestartActor>();
+            var act2 = act1.Ask<ActorRef>(new createchildactormsg()).Result;
+
+            act1.Ask<int>(new setchildactions() { restartchild = null, 
+                stopchild = () => { f = true; } }).
+                Wait();
+
+            act1.Ask<int>(new stopchild() { child = act2 }).Wait();
+
+            Assert.IsTrue(f);
+
+        }
+
+        [Test]
+        public void ChildRestartTest()
+        {
+            bool f = false;
+
+            var actf = new ActorSystem();
+            var act1 = actf.CreateActor<ChildStopRestartActor>();
+            var act2 = act1.Ask<ActorRef>(new createchildactormsg()).Result;
+
+            act1.Ask<int>(new setchildactions()
+            {
+                restartchild = () => { f = true; },
+                stopchild = null
+            }).
+                Wait();
+
+            act1.Ask<int>(new restartchild() { child = act2 }).Wait();
+
+            Assert.IsTrue(f);
+
+        }
+
+
+
+        [Test]
+        public void SystemStopTest()
+        {
+            var actf = new ActorSystem();
+            var act1 = actf.CreateActor<ChildStopRestartActor>("parent");
+            var act2 = act1.Ask<ActorRef>(new createchildactormsg()).Result;
+
+
+            var act3 = actf.FindActorByPath("\\user\\parent\\child");
+            Assert.AreEqual(act3, act2);
+            actf.StopSystem();
+            act3 = actf.FindActorByPath("\\user\\parent\\child");
+
+            Assert.IsNull(act3);
 
         }
     }

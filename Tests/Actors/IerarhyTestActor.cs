@@ -8,8 +8,17 @@ namespace AEF.Tests.Actors
 {
     class getparentmsg { }
     class getchildsmsg { }
-    class createchildactor { }
+    class createchildactormsg { }
+    class setchildactions
+    {
+        public Action stopchild { get; set; }
+        public Action restartchild { get; set; }
+    }
     class stopchild
+    {
+        public ActorRef child { get; set; }
+    }
+    class restartchild
     {
         public ActorRef child { get; set; }
     }
@@ -29,7 +38,7 @@ namespace AEF.Tests.Actors
         {
             return Context.Childs;
         }
-        public virtual ActorRef handler3(createchildactor msg)
+        public virtual ActorRef handler3(createchildactormsg msg)
         {
             return Context.CreateActor<IerarhyTestActor>("child");
         }
@@ -63,7 +72,7 @@ namespace AEF.Tests.Actors
 
         }
 
-        public override ActorRef handler3(createchildactor msg)
+        public override ActorRef handler3(createchildactormsg msg)
         {
             return Context.CreateActor<ExceptionActor>();
         }
@@ -86,5 +95,59 @@ namespace AEF.Tests.Actors
         {
             //base.PredRestart();
         }
+    }
+
+
+    class ChildStopRestartActor : Actor
+    {
+        private Action stch = null;
+        private Action rstch = null;
+
+        public override void ChildRestart()
+        {
+            if (rstch != null) rstch();
+        }
+
+
+        public override void ChildStop()
+        {
+            if (stch != null) stch();
+        }
+
+        public virtual ActorRef handler3(createchildactormsg msg)
+        {
+            return Context.CreateActor<IerarhyTestActor>("child");
+        }
+        public int handler5(stopchild msg)
+        {
+            var t = Context.PendingReturn();
+            Context.StopActor(msg.child, () =>
+            {
+                t.Return(0);
+            });
+            return 0;
+        }
+
+        public int handler6(restartchild msg)
+        {
+            var t = Context.PendingReturn();
+            Context.RestartActor(msg.child, (e) =>
+            {
+
+                t.Return(0);
+
+
+            });
+            return 0;
+        }
+
+        public int handler(setchildactions msg)
+        {
+            stch = msg.stopchild;
+            rstch = msg.restartchild;
+            return 0;
+
+        }
+
     }
 }
