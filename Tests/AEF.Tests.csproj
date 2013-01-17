@@ -42,9 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\AsyncTestActor.cs" />
+    <Compile Include="Actors\ChildInfoActor.cs" />
+    <Compile Include="Actors\ChildPriorityStopActor.cs" />
     <Compile Include="Actors\CreateFaultActor.cs" />
     <Compile Include="Actors\IerarhyTestActor.cs" />
     <Compile Include="Actors\IntoTestActor.cs" />
+    <Compile Include="Actors\Messages.cs" />
+    <Compile Include="Actors\PostStopFaultActor.cs" />
     <Compile Include="Actors\PredRestartTestActor.cs" />
     <Compile Include="Actors\RestartFaultActor.cs" />
     <Compile Include="Actors\SimpleTestActor.cs" />
@@ -53,8 +57,10 @@
     <Compile Include="ForAEF\BasicTests.cs" />
     <Compile Include="ForAEF\ExceptionProcTests.cs" />
     <Compile Include="ForAEF\InActorTests.cs" />
+    <Compile Include="ForLog\LogTests.cs" />
     <Compile Include="ForAEF\NameTests.cs" />
     <Compile Include="ForHelpers\ActorPathTests.cs" />
+    <Compile Include="ForLog\TestLogger.cs" />
     <Compile Include="Other\CocurrentQueueTests.cs" />
     <Compile Include="ForHelpers\MethodFinderTests.cs" />
     <Compile Include="ForHelpers\ReflectionHelperTests.cs" />

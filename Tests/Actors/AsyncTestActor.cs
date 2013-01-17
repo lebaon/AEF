@@ -6,19 +6,7 @@ using AEF;
 
 namespace AEF.Tests.Actors
 {
-    class stopchildex
-    {
-        public ActorRef child { get; set; }
-        public Action childstopped { get; set; }
-    }
-    class restartchildex
-    {
-        public ActorRef child { get; set; }
-        public Action<Exception> childrestarted { get; set; }
-    }
-
-    class returnask { }
-    class getstatepend { }
+    
     
     class AsyncTestActor:Actor
     {

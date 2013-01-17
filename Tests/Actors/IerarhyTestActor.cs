@@ -6,26 +6,7 @@ using AEF;
 
 namespace AEF.Tests.Actors
 {
-    class getparentmsg { }
-    class getchildsmsg { }
-    class createchildactormsg { }
-    class setchildactions
-    {
-        public Action stopchild { get; set; }
-        public Action restartchild { get; set; }
-    }
-    class stopchild
-    {
-        public ActorRef child { get; set; }
-    }
-    class restartchild
-    {
-        public ActorRef child { get; set; }
-    }
-    class seteh
-    {
-        public Func<ExceptionDecision> eh { get; set; }
-    }
+    
     
     class IerarhyTestActor:Actor
     {

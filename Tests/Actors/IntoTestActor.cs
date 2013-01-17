@@ -7,21 +7,7 @@ using AEF;
 
 namespace AEF.Tests.Actors
 {
-    class crerateactormsg { }
-    class senderdetectmsginto
-    {
-        public ActorRef sender { get; set; }
-    }
-
-    class senderdetectmsg
-    {
-        public ActorRef dest { get; set; }
-        public senderdetectmsginto msg { get; set; }
-    }
-    class poststoptestmsg
-    {
-        public Action poststop { get; set; }
-    }
+   
     class IntoTestActor:Actor
     {
         int state = 0;

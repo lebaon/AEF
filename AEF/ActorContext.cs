@@ -24,7 +24,19 @@ namespace AEF
 
         public ActorRef Parent { get { return Self_.parent; } }
         public ActorRef[] Childs { get { return Self_.childs.Keys.ToArray(); } }
-
+        public Tuple<ActorRef, int>[] ChildsPriority
+        {
+            get
+            {
+                return Self.ChildsPriority.Select(
+                    (x) => { return new Tuple<ActorRef, int>(x.Key, x.Value); }).ToArray();
+            }
+        }
+        public void SetPriority(ActorRef child, int priority)
+        {
+            if(!Childs.Contains(child)) throw new AEFException();
+            Self.SetChildPriority(child, priority);
+        }
         public PendingReturn PendingReturn()
         {
             if (!SenderAsked) throw new AEFException();

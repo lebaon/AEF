@@ -29,7 +29,9 @@ namespace AEF
         public string FullName { get { return Path.ToString(); } }
         public string Name { get { return Name_; } }
 
+        internal bool isStopped { get { return Stopped; } }
         internal ConcurrentDictionary<ActorRef, ActorRef> childs = new ConcurrentDictionary<ActorRef, ActorRef>();
+        internal ConcurrentDictionary<ActorRef, int> ChildsPriority = new ConcurrentDictionary<ActorRef, int>();
         internal bool Suspended { get { return Arbitr.Suspended; } }
 
 
@@ -100,8 +102,14 @@ namespace AEF
             actor.PredStart();
         }
 
-        private void ProcMsgInStoppedActor(Message msg) { }
-        private void ProcNotHandledMsg(Message msg) { }
+        private void ProcMsgInStoppedActor(Message msg)
+        {
+            system.ProcMsgInStoppedActor(msg, this);
+        }
+        private void ProcNotHandledMsg(Message msg)
+        {
+            system.ProcNotHandledMsg(msg, this);
+        }
         private void ProcActorException(Exception e) {
             EndProcRunning();
             if (e is AEFActorStopException) { system.StopActor(this, this); return; }
@@ -113,7 +121,10 @@ namespace AEF
             system.SuspendActor(this);
             parent.Send(new ExceptionMessage() { e = e, Sender = this });
         }
-        internal void ProcPostStopException(Exception e) { }
+        internal void ProcPostStopException(Exception e)
+        {
+            system.ProcPostStopException(e, this);
+        }
 
         private void ProcAnswerMessage(AnswerMessage msg) {
             try
@@ -298,10 +309,19 @@ namespace AEF
             
             
             while (ProcRunning) { Thread.SpinWait(0); }
-            foreach (var i in childs.Keys)
+            var t = ChildsPriority.GroupBy((x) => { return x.Value; }).
+                OrderBy((x) => { return x.First().Value; }).
+                ToArray();
+
+            for (int i = 0; i < t.Length; i++)
             {
-                system.StopActor(i, this);
+                var tt = t[i].ToArray();
+                for (int j = 0; j < tt.Length; j++)
+                {
+                    system.StopActor(tt[j].Key, this);
+                }
             }
+            
             system.RemoveChild(parent, this);
             
             if (Arbitr.Suspended) Arbitr.Resume();
@@ -331,12 +351,20 @@ namespace AEF
         }
         internal void AddChild(ActorRef child)
         {
+            ChildsPriority[child] = 0;
             childs[child] = child;
+            
+        }
+        internal void SetChildPriority(ActorRef child, int priority)
+        {
+            ChildsPriority[child] = priority;
         }
         internal void RemoveChild(ActorRef child)
         {
             ActorRef delchild;
+            int t;
             childs.TryRemove(child,out delchild);
+            ChildsPriority.TryRemove(child, out t);
         }
         internal ActorRef FindActor(ActorPath fpath)
         {

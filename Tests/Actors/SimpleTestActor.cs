@@ -6,18 +6,7 @@ using AEF;
 
 namespace AEF.Tests.Actors
 {
-    class testmsg {
-        public string msg { get; set; }
-    }
-    class acttestmsg:testmsg
-    {
-        public Func<int> act { get; set; }
-    }
-    class statemsg
-    {
-        public int newstate { get; set; }
-    }
-    class stopmsg { }
+   
     class SimpleTestActor : Actor
     {
         private int state = 0;

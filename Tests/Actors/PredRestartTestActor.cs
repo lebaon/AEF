@@ -6,14 +6,7 @@ using AEF;
 
 namespace AEF.Tests.Actors
 {
-    class setstate { public int x { get; set; } }
-    class getstate { }
-    class setpra
-    {
-        public Action<int> pra { get; set; }
-    }
-    class selfstop { }
-    class selfrestart { }
+   
 
 
     class PredRestartTestActor:Actor

@@ -12,5 +12,12 @@ namespace AEF.Actors
         {
             return ExceptionDecision.Resume;
         }
+        public override void PredStart()
+        {
+            var ua=Context.CreateActor("user", new ActorInstanceGenerator(typeof(UserActor)));
+            var sa=Context.CreateActor("system", new ActorInstanceGenerator(typeof(SystemActor)));
+            Context.SetPriority(ua, 0);
+            Context.SetPriority(sa, 1);
+        }
     }
 }

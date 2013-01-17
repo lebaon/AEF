@@ -10,6 +10,7 @@ namespace AEF.Actors
     {
         public override ExceptionDecision ChildException(Exception e)
         {
+            Context.System.ProcUserActorStoppedByException(e, Context.Sender);
             return ExceptionDecision.Stop;
         }
 

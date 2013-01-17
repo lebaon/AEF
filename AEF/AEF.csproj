@@ -44,6 +44,7 @@
     <Compile Include="ActorContext.cs" />
     <Compile Include="ActorInstanceGenerator.cs" />
     <Compile Include="Actors\RootActor.cs" />
+    <Compile Include="Actors\SystemActor.cs" />
     <Compile Include="Helpers\ActorPath.cs" />
     <Compile Include="ActorRef.cs" />
     <Compile Include="ActorRefFactory.cs" />
@@ -58,6 +59,9 @@
     <Compile Include="Helpers\ReflectionHelper.cs" />
     <Compile Include="Helpers\TaskHelper.cs" />
     <Compile Include="Helpers\ThreadHelper.cs" />
+    <Compile Include="Log\ConsoleLogger.cs" />
+    <Compile Include="Log\Ilogger.cs" />
+    <Compile Include="Log\LogActor.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="PendingReturn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

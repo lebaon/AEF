@@ -415,5 +415,164 @@ namespace AEF.Tests.ForAEF
             Assert.IsNull(act3);
 
         }
+
+
+        [Test]
+        public void ChildStopNotifyByParent()
+        {
+            var actf = new ActorSystem();
+            var act1 = actf.CreateActor<ChildInfoActor>("parent");
+
+            var act2 = act1.Ask<ActorRef>(new crerateactormsg()).Result;
+
+            bool f = false;
+
+            act1.Ask<int>(new Action(() => { f = true; }), 
+                new Action(() => { }))
+                .Wait();
+
+            var t = act1.Ask<int>(new stopchild() { child = act2 }).Result;
+
+            while (!f)
+            {
+                Thread.SpinWait(0);
+            }
+
+            Assert.AreEqual(t, 0);
+            Assert.IsTrue(f);
+
+
+        }
+
+        [Test]
+        public void ChildStopNotifyBySelf()
+        {
+            var actf = new ActorSystem();
+            var act1 = actf.CreateActor<ChildInfoActor>("parent");
+
+            var act2 = act1.Ask<ActorRef>(new crerateactormsg()).Result;
+
+            bool f = false;
+
+            act1.Ask<int>(new Action(() => { f = true; }),
+                new Action(() => { }))
+                .Wait();
+
+            try
+            {
+                act2.Ask<int>(new selfstop()).Wait();
+            }
+            catch { }
+            while (!f)
+            {
+                Thread.SpinWait(0);
+            }
+            
+            Assert.IsTrue(f);
+
+
+        }
+
+
+
+        [Test]
+        public void ChildRestartNotifyByParent()
+        {
+            var actf = new ActorSystem();
+            var act1 = actf.CreateActor<ChildInfoActor>("parent");
+
+            var act2 = act1.Ask<ActorRef>(new crerateactormsg()).Result;
+
+            bool f = false;
+
+            act1.Ask<int>(new Action(() => {  }),
+                new Action(() => { f = true; }))
+                .Wait();
+
+            var t = act1.Ask<int>(new restartchild() { child = act2 }).Result;
+
+
+            while (!f)
+            {
+                Thread.SpinWait(0);
+            }
+
+
+            Assert.AreEqual(t, 0);
+            Assert.IsTrue(f);
+
+
+        }
+
+        [Test]
+        public void ChildRestartNotifyBySelf()
+        {
+            var actf = new ActorSystem();
+            var act1 = actf.CreateActor<ChildInfoActor>("parent");
+
+            var act2 = act1.Ask<ActorRef>(new crerateactormsg()).Result;
+
+            bool f = false;
+
+            act1.Ask<int>(new Action(() => { }),
+                new Action(() => { f = true; }))
+                .Wait();
+
+            try
+            {
+                act2.Ask<int>(new selfrestart()).Wait();
+            }
+            catch { }
+            while (!f)
+            {
+                Thread.SpinWait(0);
+            }
+
+            Assert.IsTrue(f);
+
+
+        }
+
+
+        [Test]
+        public void ChildsStoppedInPriorityOrder()
+        {
+            var actf = new ActorSystem();
+            var actp = actf.CreateActor<ChildPriorityStopActor>("parent");
+            var act1 = actp.Ask<ActorRef>(new crerateactormsg()).Result;
+            var act2 = actp.Ask<ActorRef>(new crerateactormsg()).Result;
+
+            actp.Ask<int>(act1, 0).Wait();
+            actp.Ask<int>(act2, 1).Wait();
+
+            bool f1 = false;
+            bool f2 = false;
+
+            act1.Ask<int>(new Action(() =>
+            {
+                f1 = true;
+            })).Wait();
+            act2.Ask<int>(new Action(() =>
+            {
+                if (f1) f2 = true;
+            })).Wait();
+
+            try
+            {
+                actp.Ask<int>(new selfstop()).Wait();
+            }
+            catch { }
+
+            while (!f1)
+            {
+                Thread.SpinWait(0);
+            }
+            while (!f2)
+            {
+                Thread.SpinWait(0);
+            }
+            Assert.IsTrue(f1);
+            Assert.IsTrue(f2);
+        }
     }
 }

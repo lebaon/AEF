@@ -7,7 +7,16 @@ namespace AEF
 {
     public class ActorSystem : ActorRefFactory, AEF.Helpers.IFluent
     {
-        private ActorCore core = new ActorCore();
+
+        public ActorSystem()
+        {
+            core = new ActorCore();
+        }
+        public ActorSystem(Log.Ilogger logger)
+        {
+            core = new ActorCore(logger);
+        }
+        private ActorCore core;
         public override ActorRef CreateActor<T>()
         {
             return CreateActor(new ActorInstanceGenerator(typeof(T)));

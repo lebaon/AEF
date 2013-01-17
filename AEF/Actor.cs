@@ -22,6 +22,18 @@ namespace AEF
         public virtual void PostRestart() { }
         public virtual void PredRestart()
         {
+            var t = Context.ChildsPriority.GroupBy((x) => { return x.Item2; }).
+                OrderBy((x) => { return x.First().Item2; }).
+                ToArray();
+
+            for (int i = 0; i < t.Length; i++)
+            {
+                var tt = t[i].ToArray();
+                for (int j = 0; j < tt.Length; j++)
+                {
+                    Context.StopActor(tt[j].Item1);
+                }
+            }
             foreach (var i in Context.Childs)
                 Context.StopActor(i);
         }
